@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/api.dart';
 import 'package:intl/intl.dart';
-import 'history_details.dart'; // <--- IMPORT THE NEW FILE
+import 'history_details.dart';
 
 class HistoryScreen extends StatelessWidget {
   final String uid;
@@ -11,7 +11,7 @@ class HistoryScreen extends StatelessWidget {
   String _formatDate(String dateString) {
     try {
       final DateTime date = DateTime.parse(dateString);
-      // Format: "Nov 24"
+
       return DateFormat('MMM d').format(date);
     } catch (e) {
       return '?';
@@ -21,7 +21,7 @@ class HistoryScreen extends StatelessWidget {
   String _formatTime(String dateString) {
     try {
       final DateTime date = DateTime.parse(dateString);
-      // Format: "2:30 PM"
+
       return DateFormat('h:mm a').format(date);
     } catch (e) {
       return '';
@@ -67,7 +67,7 @@ class HistoryScreen extends StatelessWidget {
               child: ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 onTap: () {
-                  // --- NAVIGATION LOGIC ---
+                  //navigation
                   Navigator.push(
                     context,
                     MaterialPageRoute(

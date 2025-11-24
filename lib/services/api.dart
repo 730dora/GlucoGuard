@@ -6,8 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class ApiService {
 
   // IP ADDRESS:
-  // Use '10.0.2.2:5000' if you are using the Android Emulator.
-  // Use 'YOUR_PC_IP:5000' (e.g., 192.168.1.5:5000) if using a real phone.
+  // '10.0.2.2:5000' for Android Emulator.
+  // 'mypcIP:5000' (e.g., 192.168.1.5:5000) for a real phone.
   static const String _baseUrl = 'http://10.0.2.2:5000';
 
   /// 1. PREDICT: Tries Python first, falls back to Local if offline
@@ -15,7 +15,7 @@ class ApiService {
     Map<String, dynamic> result;
 
     try {
-      // --- OPTION A: ONLINE (Python Backend) ---
+      // OPTION A: ONLINE (Python Backend)
       // We try to talk to the Python script
       final response = await http.post(
         Uri.parse('$_baseUrl/predict'),
@@ -78,7 +78,7 @@ class ApiService {
     riskScore += (input['age']! * 0.005);
     if (input['gender'] == 1.0) riskScore += 0.05; // Male adjustment
 
-    // Add randomness so it looks real
+    // randomness for realness
     riskScore += Random().nextDouble() * 0.05;
 
     if (riskScore > 0.99) riskScore = 0.99;

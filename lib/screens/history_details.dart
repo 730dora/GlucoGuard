@@ -45,7 +45,7 @@ class HistoryDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. DATE HEADER
+            // date header
             Center(
               child: Text(
                 _formatDateTime(data['date']),
@@ -54,7 +54,7 @@ class HistoryDetailsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // 2. RESULT CARD
+            // result card
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
@@ -89,14 +89,14 @@ class HistoryDetailsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 30),
 
-            // 3. THE "ALL DETAILS" SECTION
+            // "ALL DETAILS" section
             const Text(
               "Inputs Record",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
 
-            // Generate a row for every input saved
+            // a row for every input saved is generated
             ..._buildInputRows(input),
           ],
         ),

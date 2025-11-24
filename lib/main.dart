@@ -9,7 +9,7 @@ import 'theme.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // This connects to the Firebase project you just configured
+  // connects to the Firebase project
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -26,7 +26,7 @@ class GlucoGuardApp extends StatelessWidget {
       title: 'GlucoGuard',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      // Check if user is already logged in
+      // Checks if user is already logged in
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
@@ -35,7 +35,7 @@ class GlucoGuardApp extends StatelessWidget {
           }
           if (snapshot.hasData) {
             // User is logged in! Send them to the Footer (Dashboard)
-            // We pass the UID so we can fetch their profile data later
+            // pass the UID so we can fetch their profile data later
             return Footer(uid: snapshot.data!.uid, email: snapshot.data!.email!);
           }
           return const LoginScreen();

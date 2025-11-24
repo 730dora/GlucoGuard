@@ -20,7 +20,7 @@ class HeaderBar extends StatelessWidget implements PreferredSizeWidget {
         Padding(
           padding: const EdgeInsets.only(right: 16),
           child: GestureDetector(
-            onTap: onProfileTap, // <-- This now uses the new parameter
+            onTap: onProfileTap,
             child: CircleAvatar(
               backgroundColor: AppTheme.violet.withOpacity(0.2),
               child: const Icon(Icons.person, color: AppTheme.violet),

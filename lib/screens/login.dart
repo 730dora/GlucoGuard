@@ -50,13 +50,13 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _login() async {
-    // 1. Log in with Firebase Auth
+    // Log in with Firebase Auth
     UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: _emailController.text.trim(),
       password: _passwordController.text.trim(),
     );
 
-    // 2. Navigate to Home
+    // Navigate to Home
     if (!mounted) return;
     Navigator.pushReplacement(
       context,
@@ -71,13 +71,13 @@ class _LoginScreenState extends State<LoginScreen> {
     final password = _passwordController.text.trim();
     final username = _usernameController.text.trim();
 
-    // 1. Create User in Firebase Auth
+    // Create User in Firebase Auth
     UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
 
-    // 2. Save "Extra" info (Gender, Username) to Firestore Database
+    // Save "Extra" info (Gender, Username) to Firestore Database
     await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
       'username': username,
       'email': email,
@@ -85,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
       'createdAt': FieldValue.serverTimestamp(),
     });
 
-    // 3. Navigate
+    // Navigate
     if (!mounted) return;
     Navigator.pushReplacement(
       context,

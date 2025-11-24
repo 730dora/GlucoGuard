@@ -63,7 +63,7 @@ class _PredictionScreenState extends State<PredictionScreen> {
         'gender': (widget.gender == "Male") ? 1.0 : 0.0,
       };
 
-      // CALL THE NEW API SERVICE (Passing UID)
+      // call the new api service (Passing UID)
       final result = await ApiService.predict(inputForApi, widget.uid);
 
       if (mounted) {
@@ -73,9 +73,9 @@ class _PredictionScreenState extends State<PredictionScreen> {
             // We pass "User" or fetch it again, but usually result screen just needs the data
             builder: (_) => ResultScreen(
                 result: result,
-                username: widget.username, // <--- Real Username
-                uid: widget.uid,           // <--- Pass UID for profile
-                email: widget.email        // <--- Pass Email for profile
+                username: widget.username, // Username
+                uid: widget.uid,           // UID for profile
+                email: widget.email        // Email for profile
             ),
           ),
         );

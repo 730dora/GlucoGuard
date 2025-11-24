@@ -1,36 +1,36 @@
 import unittest
 import json
-from backend import app # This imports your 'app' variable from backend.py
+from backend import app
 
 class TestDiabetesPrediction(unittest.TestCase):
 
     def setUp(self):
-        # Set up a fake server for testing
+        # fake server for testing
         self.app = app.test_client()
         self.app.testing = True
 
     def test_prediction_api_online(self):
         """Test if the API endpoint returns a 200 OK and valid JSON"""
-        # Mock data (A healthy person)
+        # Mock data for a healthy person (female)
         payload = {
             "glucose": 85,
             "bmi": 22.0,
             "age": 25,
-            "gender": 0, # Female
+            "gender": 0, # female
             "insulin": 80,
             "skinThickness": 20,
             "systolic": 110,
             "diastolic": 70
         }
 
-        # Send fake POST request
+        # fake POST request sent
         response = self.app.post('/predict',
                                  data=json.dumps(payload),
                                  content_type='application/json')
 
         data = json.loads(response.data)
 
-        # Assertions (The "Test")
+        # the test
         self.assertEqual(response.status_code, 200)
         self.assertIn('risk', data)
         self.assertIn('probability', data)
@@ -39,10 +39,10 @@ class TestDiabetesPrediction(unittest.TestCase):
     def test_high_risk_logic(self):
         """Test if high values actually trigger High Risk"""
         payload = {
-            "glucose": 200, # Very High
-            "bmi": 40.0,    # Very High
+            "glucose": 200, # very high
+            "bmi": 40.0,    # very high
             "age": 60,
-            "gender": 1     # Male
+            "gender": 1     # male
         }
 
         response = self.app.post('/predict',
@@ -51,7 +51,7 @@ class TestDiabetesPrediction(unittest.TestCase):
 
         data = json.loads(response.data)
 
-        # We expect High Risk or at least a high probability
+        # here a high risk is expected
         self.assertTrue(data['probability'] > 0.6)
         print(f"✅ High Risk Logic Test Passed! (Prob: {data['probability']})")
 
