@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "242443416800",
+    "project_id": "glucoguard-c24e3",
+    "storage_bucket": "glucoguard-c24e3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:242443416800:android:4402f3dcd4e5c26ebb4c85",
+        "android_client_info": {
+          "package_name": "com.example.interdisciplinary"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqXSmgkfo2ASL_dJrVgJsdL16ZnpbdF-4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
