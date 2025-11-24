@@ -55,7 +55,7 @@ class _PredictionWheelState extends State<PredictionWheel> with SingleTickerProv
   }
 }
 
-/// This is the CustomPainter that draws the gauge and needle
+// the CustomPainter that draws the gauge and needle
 class _GaugePainter extends CustomPainter {
   final double probability; // The animated value (0.0 to 1.0)
 
@@ -74,15 +74,15 @@ class _GaugePainter extends CustomPainter {
     const startAngle = pi; // 180 degrees (left side)
     const sweepAngle = pi; // 180 degrees sweep to the right
 
-    // 1. Draw the background arc (the "empty" track)
+    //the background arc (the "empty" track)
     final backgroundPaint = Paint()
-      ..color = Colors.grey[300]! // Made slightly darker to be more visible
+      ..color = Colors.grey[300]!
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round; // Rounded ends
     canvas.drawArc(rect, startAngle, sweepAngle, false, backgroundPaint);
 
-    // 2. Draw the foreground (progress) arc
+    // the foreground (progress) arc
     final progressPaint = Paint()
       ..shader = SweepGradient(
         center: FractionalOffset.center,
@@ -101,7 +101,7 @@ class _GaugePainter extends CustomPainter {
 
     canvas.drawArc(rect, startAngle, probability * sweepAngle, false, progressPaint);
 
-    // 3. Draw the Needle (Pointer)
+    // the Needle (Pointer)
     final double needleAngle = startAngle + (probability * sweepAngle);
     final double pivotRadius = 12;
     // The needle is a long triangle
@@ -126,7 +126,7 @@ class _GaugePainter extends CustomPainter {
       ..lineTo(needleBaseRight.dx, needleBaseRight.dy)
       ..close();
 
-    // Draw the shadow for the needle
+    // shadow for the needle
     final needleShadowPaint = Paint()
       ..color = Colors.black.withOpacity(0.3)
       ..maskFilter = MaskFilter.blur(BlurStyle.normal, 4.0);
@@ -142,14 +142,14 @@ class _GaugePainter extends CustomPainter {
       ..style = PaintingStyle.fill;
     canvas.drawPath(needlePath, needlePaint);
 
-    // 4. Draw the pivot circle (more stylish)
+    // the pivot circle (more stylish)
     final pivotShadowPaint = Paint()
       ..color = Colors.black.withOpacity(0.4)
       ..maskFilter = MaskFilter.blur(BlurStyle.normal, 4);
 
-    canvas.drawCircle(centerOffset, pivotRadius + 2, pivotShadowPaint); // Shadow
+    canvas.drawCircle(centerOffset, pivotRadius + 2, pivotShadowPaint); // shadow
 
-    final pivotPaint = Paint()..color = const Color(0xFF4A4A4A); // Dark grey pivot
+    final pivotPaint = Paint()..color = const Color(0xFF4A4A4A); // dark grey pivot
     canvas.drawCircle(centerOffset, pivotRadius, pivotPaint);
 
     final pivotInnerPaint = Paint()..color = Colors.white.withOpacity(0.8);

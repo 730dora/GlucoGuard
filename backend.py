@@ -6,7 +6,7 @@ import datetime
 
 app = Flask(__name__)
 
-# 1. Load the Trained AI Model
+# load the Trained AI Model
 try:
     model = joblib.load('diabetesModel.pkl')
     print("AI Model loaded successfully.")
@@ -18,47 +18,45 @@ except:
 def predict():
     data = request.json
 
-    # 2. Extract Data from Flutter
+    # Extract Data from Flutter
     # Note: The Pima dataset expects specific order:
     # [Pregnancies, Glucose, BP, Skin, Insulin, BMI, Pedigree, Age]
 
-    # Since your app doesn't ask for "Pregnancies" or "Pedigree",
-    # we must estimate them or use averages (0 is safer for demo)
+    # we do not have "pregnancies" or "pedigree" like the csv so we estimated
+    # 0 is the safe option or average
     features = [
-        0,                          # Pregnancies (Not in your UI, assume 0)
+        0,                          # Pregnancies
         float(data.get('glucose', 0)),
-        float(data.get('diastolic', 0)), # BP usually refers to Diastolic in these datasets
+        float(data.get('diastolic', 0)), # BP is Diastolic in these datasets
         float(data.get('skinThickness', 20)),
         float(data.get('insulin', 0)),
         float(data.get('bmi', 0)),
-        0.5,                        # DiabetesPedigreeFunction (Average genetics)
+        0.5,                        # DiabetesPedigreeFunction
         float(data.get('age', 0))
     ]
 
-    # Gender Adjustment (The Pima dataset is all female)
-    # If male, we might slightly lower the risk output manually afterwards,
-    # but the AI model itself is based on female biology.
+    #the AI is based purely on female cause Pima is like that so for male we slightly lower the risk
     gender_factor = 1.0
-    if data.get('gender') == 1: # Male
-        gender_factor = 0.9 # Slightly lower risk for same stats
+    if data.get('gender') == 1: # male
+        gender_factor = 0.9
 
     if model:
-        # 3. ASK THE AI
-        # reshape(1, -1) tells the model "this is one single patient"
+        # here we ask the AI
+        # reshape(1, -1) = "one patient"
         prediction_input = np.array([features]).reshape(1, -1)
 
         # predict_proba returns [[% Non-Diabetic, % Diabetic]]
-        # We want index 1 (The probability of being positive)
+        # index 1 is the probability of being positive
         risk_score = model.predict_proba(prediction_input)[0][1]
 
-        # Apply gender tweak
+        # gender tweak
         risk_score = risk_score * gender_factor
 
     else:
-        # Fallback if model isn't loaded (Mock logic)
+        # for when the model is not loaded (if)
         risk_score = 0.5
 
-        # 4. Generate Label
+        # label generator
     risk_label = "Low Risk (Non-Diabetic)"
     if risk_score > 0.7:
         risk_label = "High Risk (Diabetic)"

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/header.dart';
 import '../theme.dart';
-import '../widgets/prediction_wheel.dart'; // Import our new wheel
+import '../widgets/prediction_wheel.dart';
 
 class ResultScreen extends StatelessWidget {
   final Map<String, dynamic> result;
@@ -10,7 +10,7 @@ class ResultScreen extends StatelessWidget {
   final String email;
   const ResultScreen({super.key, required this.result, required this.username, required this.email, required this.uid});
 
-  // Helper to get the risk color for the text
+  // Helper risk color for the text
   Color _getRiskColor(double prob) {
     if (prob > 0.7) return Colors.redAccent;
     if (prob > 0.4) return AppTheme.violet;
@@ -19,9 +19,9 @@ class ResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Get the data from the result map
+    // data from the result map
     final double probability = result['probability'];
-    final String risk = result['risk']; // e.g., "High Risk (Diabetic)"
+    final String risk = result['risk']; // like "High Risk (Diabetic)"
 
     return Scaffold(
       appBar: HeaderBar(username: username),
@@ -34,8 +34,8 @@ class ResultScreen extends StatelessWidget {
           ),
           const SizedBox(height: 30),
 
-          // --- THIS IS THE FIX ---
-          // The wheel is now only given the probability
+
+          // wheel is now only given the probability
           Center(
             child: PredictionWheel(
               probability: probability,
@@ -44,11 +44,10 @@ class ResultScreen extends StatelessWidget {
 
           const SizedBox(height: 30),
 
-          // The text block remains separate, underneath the wheel
           Center(
             child: Column(
               children: [
-                // The Risk Text
+                // Risk Text
                 Text(
                   risk,
                   textAlign: TextAlign.center,
@@ -59,7 +58,7 @@ class ResultScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                // The Confidence Score Text
+                // Confidence Score Text
                 Text(
                   'Confidence Score: ${(probability * 100).toStringAsFixed(1)}%',
                   style: const TextStyle(color: Colors.black54, fontSize: 16),

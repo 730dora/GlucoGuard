@@ -4,7 +4,7 @@ import '../theme.dart';
 import '../widgets/history_chart.dart';
 
 class HomeScreen extends StatelessWidget {
-  final String uid; // Changed from email to uid
+  final String uid; // from email to uid
   final String username;
 
   const HomeScreen({super.key, required this.uid, required this.username});
@@ -24,8 +24,7 @@ class HomeScreen extends StatelessWidget {
         return ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            // ... (Keep your Card and Chart code exactly as it was, no changes needed inside) ...
-            // Just ensure you pass 'history' to the chart:
+
             latest == null
                 ? const Card(child: Padding(padding: EdgeInsets.all(16), child: Text("No data yet.")))
                 : Card(

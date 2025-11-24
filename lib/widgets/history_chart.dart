@@ -28,11 +28,11 @@ class HistoryChart extends StatelessWidget {
       );
     }
 
-    // 1. Process the data
+    // Process the data
     // The history is newest-first, so we must reverse it for the chart
     final List<Map<String, dynamic>> reversedHistory = history.reversed.toList();
 
-    // Convert our history data into a list of (x, y) spots
+    // Convert the history data into a list of (x, y) spots
     final List<FlSpot> spots = [];
     for (int i = 0; i < reversedHistory.length; i++) {
       final item = reversedHistory[i];
@@ -42,15 +42,15 @@ class HistoryChart extends StatelessWidget {
       spots.add(FlSpot(i.toDouble(), probability));
     }
 
-    // 2. Build the chart
+    // Build the chart
     return SizedBox(
       height: 180,
       child: LineChart(
         LineChartData(
-          // We don't want a grid
+          // no grid
           gridData: const FlGridData(show: false),
 
-          // Hide all the titles and labels on the borders
+          // all titles and labels on the borders
           titlesData: FlTitlesData(
             show: true,
             topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -78,7 +78,7 @@ class HistoryChart extends StatelessWidget {
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 40,
-                // This labels the Y-axis "0%", "50%", "100%"
+
                 getTitlesWidget: (value, meta) {
                   String text = '';
                   if (value == 0) text = '0%';
@@ -91,7 +91,7 @@ class HistoryChart extends StatelessWidget {
             ),
           ),
 
-          // Set the min/max boundaries of the chart
+          // min/max boundaries of the chart
           minX: 0,
           maxX: (spots.length - 1).toDouble(), // Max x is the last index
           minY: 0, // 0%
@@ -104,13 +104,13 @@ class HistoryChart extends StatelessWidget {
           lineBarsData: [
             LineChartBarData(
               spots: spots,
-              isCurved: true, // Make it a "cute" curvy line
-              color: AppTheme.violet, // Use your theme color
+              isCurved: true, // cute curvy line
+              color: AppTheme.violet,
               barWidth: 4,
               isStrokeCapRound: true,
               dotData: FlDotData(
                 show: true,
-                // This styles the dots on the data points
+                // the dots on the data points style
                 getDotPainter: (spot, percent, barData, index) {
                   return FlDotCirclePainter(
                     radius: 6,

@@ -10,7 +10,7 @@ class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key, required this.uid, required this.username, required this.email});
 
   Future<void> _logout(BuildContext context) async {
-    await FirebaseAuth.instance.signOut(); // Real Firebase Logout
+    await FirebaseAuth.instance.signOut(); // Firebase Logout
     if (context.mounted) {
       Navigator.pushAndRemoveUntil(
           context,
