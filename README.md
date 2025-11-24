@@ -16,3 +16,7 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 
 *new line to check the pull request*
+Team
+-Petre Teodora Maria
+-Nedelcu-Holtea Catalina
+-Florea Ioana Ana Maria 
