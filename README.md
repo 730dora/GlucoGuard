@@ -1,22 +1,12 @@
 # interdisciplinary
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
-*new line to check the pull request*
-
+What we changed: 
+1. Added a small feature (pulse_pressure) if systolic/diastolic exist.
+2. Training pipeline: median imputation + StandardScaler + RandomForest inside an sklearn Pipeline.
+3. Hyperparameter tuning using RandomizedSearchCV with StratifiedKFold and ROC-AUC scoring.
+4. Calibrated predicted probabilities using CalibratedClassifierCV (Platt scaling).
+5. Saved the calibrated model as diabetesModel.pkl (backup of uncalibrated model preserved).
+6. Accepts partial input with sensible defaults.
 Team
 -Petre Teodora Maria
 -Nedelcu-Holtea Catalina
