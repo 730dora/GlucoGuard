@@ -40,6 +40,17 @@ def predict():
     if data.get('gender') == 1: # male
         gender_factor = 0.9
 
+      required_fields = ['glucose','bmi','age','systolic','diastolic','insulin','skinThickness','gender']
+    for field in required_fields:
+        if field not in data:
+            return jsonify({'error': f'Missing field: {field}'}), 400
+        try:
+            val = float(data[field])
+        except (ValueError, TypeError):
+            return jsonify({'error': f'Invalid value for {field}, must be a number'}), 400
+    # optionally: check ranges, e.g. if val < 0 or outside plausible bounds
+    # then proceed to prediction
+
     if model:
         # here we ask the AI
         # reshape(1, -1) = "one patient"
