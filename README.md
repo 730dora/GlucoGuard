@@ -141,7 +141,39 @@ The project includes unit tests for the critical AI logic.
 ```bash
 python test_backend.py
 ```
+### 1. Improved `/predict` Endpoint Validation
+A validation layer was added to the `/predict` endpoint to ensure the backend
+receives complete and correctly formatted data before performing predictions.
 
+This update includes:
+- Checking for required fields  
+- Rejecting invalid types (e.g., strings instead of numbers)  
+- Rejecting negative numeric values  
+- Rejecting invalid gender values  
+- Returning structured error messages with HTTP 400 codes  
+
+This increases the robustness of the prediction pipeline and prevents
+unexpected crashes caused by malformed client input.
+
+---
+
+### 2. Added Automated Tests for Invalid Input Scenarios
+A new `tests/` directory was created containing `test_invalid_inputs.py`,
+which includes a suite of pytest tests designed to verify the behavior of the
+`/predict` endpoint when receiving invalid or incomplete data.
+
+The tests cover:
+- Missing required fields  
+- Incorrect data types  
+- Negative numeric values  
+- Invalid gender values  
+- Empty request body  
+- Out-of-range/extreme values  
+
+Run tests using:
+
+```bash
+pytest
 
 ## Contributors
 * PETRE Teodora-Maria
