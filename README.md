@@ -174,7 +174,7 @@ Run tests using:
 
 ```bash
 pytest
-
+```
 ## Contributors
 * PETRE Teodora-Maria
 * NEDELCU-HOLTEA Cătălina
