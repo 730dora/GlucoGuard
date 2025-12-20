@@ -61,7 +61,9 @@ class HistoryDetailsScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: _getRiskColor(probability).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: _getRiskColor(probability).withOpacity(0.5)),
+                border: Border.all(
+                  color: _getRiskColor(probability).withOpacity(0.5),
+                ),
               ),
               child: Column(
                 children: [

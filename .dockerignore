@@ -1,0 +1,80 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Flutter
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Android
+android/
+ios/
+linux/
+macos/
+windows/
+web/
+
+# Node modules (if any)
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+!README.md
+
+# Scripts
+*.ps1
+*.sh
+*.bat
+
+# Ngrok and other tools
+ngrok.exe
+ngrok
+
+# Logs
+*.log
+
+# Environment files (keep structure, but ignore sensitive data)
+.env.local
+.env.*.local
+
+# Test files
+test/
+*_test.dart
+*_test.py
+
+# Temporary files
+*.tmp
+*.temp
+
+

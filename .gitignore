@@ -1,3 +1,18 @@
+# Environment files
+.env
+
+# Model artifacts
+*.pkl
+
+# Build artifacts
+build/
+/.dart_tool/
+/.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.gradle
+/.idea
+/.vscode
 # Miscellaneous
 *.class
 *.log

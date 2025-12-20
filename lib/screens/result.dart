@@ -8,7 +8,13 @@ class ResultScreen extends StatelessWidget {
   final String username;
   final String uid;
   final String email;
-  const ResultScreen({super.key, required this.result, required this.username, required this.email, required this.uid});
+  const ResultScreen({
+    super.key,
+    required this.result,
+    required this.username,
+    required this.email,
+    required this.uid,
+  });
 
   // Helper risk color for the text
   Color _getRiskColor(double prob) {
@@ -29,18 +35,15 @@ class ResultScreen extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         children: [
           Center(
-            child: Text('Prediction Result',
-                style: Theme.of(context).textTheme.titleLarge),
+            child: Text(
+              'Prediction Result',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
           ),
           const SizedBox(height: 30),
 
-
           // wheel is now only given the probability
-          Center(
-            child: PredictionWheel(
-              probability: probability,
-            ),
-          ),
+          Center(child: PredictionWheel(probability: probability)),
 
           const SizedBox(height: 30),
 
@@ -69,20 +72,26 @@ class ResultScreen extends StatelessWidget {
 
           const SizedBox(height: 20),
           const Divider(),
-          const Text('Health Tips',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text(
+            'Health Tips',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 10),
           ...[
             'Drink water instead of soda or sugary drinks.',
             'Try to get 30 minutes of moderate exercise daily.',
             'Eat more vegetables, fruits, and lean protein.',
             'Monitor your glucose levels regularly as advised.',
-            'Aim for 7-8 hours of quality sleep per night.'
-          ].map((tip) => ListTile(
-            leading: const Icon(Icons.check_circle_outline,
-                color: AppTheme.mint),
-            title: Text(tip),
-          )),
+            'Aim for 7-8 hours of quality sleep per night.',
+          ].map(
+            (tip) => ListTile(
+              leading: const Icon(
+                Icons.check_circle_outline,
+                color: AppTheme.mint,
+              ),
+              title: Text(tip),
+            ),
+          ),
         ],
       ),
     );

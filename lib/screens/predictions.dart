@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/api.dart';
 import 'result.dart';
 import '../theme.dart';
+import '../utils/input_sanitizer.dart';
 
 class PredictionScreen extends StatefulWidget {
   final String uid; // Added UID
@@ -14,7 +15,7 @@ class PredictionScreen extends StatefulWidget {
     required this.uid,
     required this.email,
     required this.gender,
-    required this.username
+    required this.username,
   });
 
   @override
@@ -43,45 +44,86 @@ class _PredictionScreenState extends State<PredictionScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // Safely parse optional numeric inputs. If a field is empty or invalid
-      // we simply omit it from the map so ApiService will fill defaults.
-      double? weightKg = double.tryParse(data['weight']!.text);
-      double? heightCm = double.tryParse(data['height']!.text);
+      // Safely parse and validate numeric inputs with range checks
+      double? weightKg = InputSanitizer.sanitizeNumericInput(
+        data['weight']!.text,
+        min: 0.0,
+        max: 500.0, // Reasonable weight limit
+      );
+      double? heightCm = InputSanitizer.sanitizeNumericInput(
+        data['height']!.text,
+        min: 0.0,
+        max: 300.0, // Reasonable height limit
+      );
+      
       double? calculatedBmi;
-      if (weightKg != null && heightCm != null && heightCm != 0) {
+      if (weightKg != null && heightCm != null && heightCm > 0) {
+        // Validate inputs before calculation
+        if (!InputSanitizer.isFiniteNumber(weightKg) || 
+            !InputSanitizer.isFiniteNumber(heightCm)) {
+          throw Exception('Invalid numeric values');
+        }
         final double heightM = heightCm / 100;
         calculatedBmi = weightKg / (heightM * heightM);
+        // Validate BMI result
+        if (!InputSanitizer.isFiniteNumber(calculatedBmi) || 
+            !InputSanitizer.validateNumericRange('bmi', calculatedBmi)) {
+          calculatedBmi = null;
+        }
       }
 
-      // Helper to try-parse each field and only include when valid
-      double? tryField(String key) {
+      // Helper to sanitize and validate each field
+      double? tryField(String key, {double? min, double? max}) {
         final text = data[key]!.text;
         if (text.isEmpty) return null;
-        return double.tryParse(text);
+        
+        // Use sanitizer with range validation
+        final value = InputSanitizer.sanitizeNumericInput(text, min: min, max: max);
+        if (value == null) return null;
+        
+        // Check for NaN/Infinity
+        if (!InputSanitizer.isFiniteNumber(value)) return null;
+        
+        // Validate against backend schema ranges
+        if (!InputSanitizer.validateNumericRange(key, value)) return null;
+        
+        return value;
       }
 
       final Map<String, double> inputForApi = {};
-      final glucose = tryField('glucose');
+      
+      // Validate each field with appropriate ranges
+      final glucose = tryField('glucose', min: 0.0, max: 1000.0);
       if (glucose != null) inputForApi['glucose'] = glucose;
 
-      final age = tryField('age');
+      final age = tryField('age', min: 0.0, max: 130.0);
       if (age != null) inputForApi['age'] = age;
 
-      final systolic = tryField('systolic');
-      if (systolic != null) inputForApi['systolic'] = systolic;
+      // Systolic is not in backend schema, but we'll validate it anyway
+      final systolic = tryField('systolic', min: 0.0, max: 300.0);
+      if (systolic != null && InputSanitizer.isFiniteNumber(systolic)) {
+        // Systolic is not sent to backend, but we validate it for data integrity
+      }
 
-      final diastolic = tryField('diastolic');
+      final diastolic = tryField('diastolic', min: 0.0, max: 300.0);
       if (diastolic != null) inputForApi['diastolic'] = diastolic;
 
-      final insulin = tryField('insulin');
+      final insulin = tryField('insulin', min: 0.0, max: 2000.0);
       if (insulin != null) inputForApi['insulin'] = insulin;
 
-      final skin = tryField('skinThickness');
+      final skin = tryField('skinThickness', min: 0.0, max: 100.0);
       if (skin != null) inputForApi['skinThickness'] = skin;
 
-      if (calculatedBmi != null) inputForApi['bmi'] = calculatedBmi;
+      if (calculatedBmi != null && InputSanitizer.isFiniteNumber(calculatedBmi)) {
+        inputForApi['bmi'] = calculatedBmi;
+      }
 
       inputForApi['gender'] = (widget.gender == "Male") ? 1.0 : 0.0;
+
+      // Validate UID before API call
+      if (!InputSanitizer.isValidFirebaseUid(widget.uid)) {
+        throw Exception('Invalid user ID');
+      }
 
       // call the new api service (Passing UID)
       final result = await ApiService.predict(inputForApi, widget.uid);
@@ -92,10 +134,10 @@ class _PredictionScreenState extends State<PredictionScreen> {
           MaterialPageRoute(
             // We pass "User" or fetch it again, but usually result screen just needs the data
             builder: (_) => ResultScreen(
-                result: result,
-                username: widget.username, // Username
-                uid: widget.uid,           // UID for profile
-                email: widget.email        // Email for profile
+              result: result,
+              username: widget.username, // Username
+              uid: widget.uid, // UID for profile
+              email: widget.email, // Email for profile
             ),
           ),
         );
@@ -139,25 +181,78 @@ class _PredictionScreenState extends State<PredictionScreen> {
             const SizedBox(height: 20),
 
             // --- THIS LOOP GENERATES THE TEXT FIELDS ---
-            ...data.entries.map((e) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: TextFormField(
-                controller: e.value,
-                decoration: InputDecoration(
-                  labelText: _getLabelText(e.key),
-                  hintText: _getHintText(e.key),
+            ...data.entries.map(
+              (e) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: TextFormField(
+                  controller: e.value,
+                  decoration: InputDecoration(
+                    labelText: _getLabelText(e.key),
+                    hintText: _getHintText(e.key),
+                  ),
+                  keyboardType: TextInputType.number,
+                  validator: (v) {
+                    // Allow empty fields (user may leave optional fields blank).
+                    if (v == null || v.trim().isEmpty) return null;
+                    
+                    // Get range constraints based on field type
+                    double? min, max;
+                    switch (e.key) {
+                      case 'glucose':
+                        min = 0.0;
+                        max = 1000.0;
+                        break;
+                      case 'diastolic':
+                        min = 0.0;
+                        max = 300.0;
+                        break;
+                      case 'skinThickness':
+                        min = 0.0;
+                        max = 100.0;
+                        break;
+                      case 'insulin':
+                        min = 0.0;
+                        max = 2000.0;
+                        break;
+                      case 'age':
+                        min = 0.0;
+                        max = 130.0;
+                        break;
+                      case 'weight':
+                        min = 0.0;
+                        max = 500.0;
+                        break;
+                      case 'height':
+                        min = 0.0;
+                        max = 300.0;
+                        break;
+                      case 'systolic':
+                        min = 0.0;
+                        max = 300.0;
+                        break;
+                    }
+                    
+                    // Use sanitizer for validation
+                    final value = InputSanitizer.sanitizeNumericInput(v, min: min, max: max);
+                    if (value == null) {
+                      if (min != null && max != null) {
+                        return 'Enter a valid number between $min and $max';
+                      }
+                      return 'Enter a valid number';
+                    }
+                    
+                    // Check for NaN/Infinity
+                    if (!InputSanitizer.isFiniteNumber(value)) {
+                      return 'Invalid number value';
+                    }
+                    
+                    return null;
+                  },
                 ),
-                keyboardType: TextInputType.number,
-                validator: (v) {
-                  // Allow empty fields (user may leave optional fields blank).
-                  if (v == null || v.trim().isEmpty) return null;
-                  // If non-empty, require a valid number.
-                  return double.tryParse(v) == null ? 'Enter valid number' : null;
-                },
               ),
-            )),
-            // -------------------------------------------
+            ),
 
+            // -------------------------------------------
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: _isLoading ? null : _predict,
@@ -179,8 +274,9 @@ class _PredictionScreenState extends State<PredictionScreen> {
                 }
               },
               style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  foregroundColor: Colors.grey[700]),
+                minimumSize: const Size(double.infinity, 50),
+                foregroundColor: Colors.grey[700],
+              ),
               child: const Text('Reset'),
             ),
           ],
@@ -192,30 +288,48 @@ class _PredictionScreenState extends State<PredictionScreen> {
   // Helper for Labels
   String _getLabelText(String key) {
     switch (key) {
-      case 'glucose': return 'Glucose Level';
-      case 'weight': return 'Weight (in kg)';
-      case 'height': return 'Height (in cm)';
-      case 'systolic': return 'Systolic BP (top number)';
-      case 'diastolic': return 'Diastolic BP (bottom number)';
-      case 'insulin': return 'Insulin Level';
-      case 'skinThickness': return 'Skin Thickness';
-      case 'age': return 'Age';
-      default: return key;
+      case 'glucose':
+        return 'Glucose Level';
+      case 'weight':
+        return 'Weight (in kg)';
+      case 'height':
+        return 'Height (in cm)';
+      case 'systolic':
+        return 'Systolic BP (top number)';
+      case 'diastolic':
+        return 'Diastolic BP (bottom number)';
+      case 'insulin':
+        return 'Insulin Level';
+      case 'skinThickness':
+        return 'Skin Thickness';
+      case 'age':
+        return 'Age';
+      default:
+        return key;
     }
   }
 
   // Helper for Hints
   String _getHintText(String key) {
     switch (key) {
-      case 'glucose': return 'e.g., 100';
-      case 'weight': return 'e.g., 70';
-      case 'height': return 'e.g., 175';
-      case 'age': return 'e.g., 45';
-      case 'systolic': return 'e.g., 120';
-      case 'diastolic': return 'e.g., 80';
-      case 'insulin': return 'e.g., 10';
-      case 'skinThickness': return 'e.g., 25';
-      default: return '';
+      case 'glucose':
+        return 'e.g., 100';
+      case 'weight':
+        return 'e.g., 70';
+      case 'height':
+        return 'e.g., 175';
+      case 'age':
+        return 'e.g., 45';
+      case 'systolic':
+        return 'e.g., 120';
+      case 'diastolic':
+        return 'e.g., 80';
+      case 'insulin':
+        return 'e.g., 10';
+      case 'skinThickness':
+        return 'e.g., 25';
+      default:
+        return '';
     }
   }
 }

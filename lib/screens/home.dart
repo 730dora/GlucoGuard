@@ -24,24 +24,49 @@ class HomeScreen extends StatelessWidget {
         return ListView(
           padding: const EdgeInsets.all(20),
           children: [
-
             latest == null
-                ? const Card(child: Padding(padding: EdgeInsets.all(16), child: Text("No data yet.")))
+                ? const Card(
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Text("No data yet."),
+                    ),
+                  )
                 : Card(
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Latest Result', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    Text(latest['risk'], style: const TextStyle(fontSize: 22, color: AppTheme.violet, fontWeight: FontWeight.bold)),
-                    Text('Chances of diabetes: ${(latest['probability'] * 100).toStringAsFixed(1)}%'),
-                    Text('Source: ${latest['source'] ?? "Local"}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                  ],
-                ),
-              ),
-            ),
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Latest Result',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            latest['risk'],
+                            style: const TextStyle(
+                              fontSize: 22,
+                              color: AppTheme.violet,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            'Chances of diabetes: ${(latest['probability'] * 100).toStringAsFixed(1)}%',
+                          ),
+                          Text(
+                            'Source: ${latest['source'] ?? "Local"}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
             const SizedBox(height: 20),
             HistoryChart(history: history),
           ],

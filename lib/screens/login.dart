@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/footer.dart';
 import '../theme.dart';
+import '../utils/input_sanitizer.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -50,37 +51,80 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _login() async {
+    // Sanitize and validate email
+    final sanitizedEmail = InputSanitizer.sanitizeEmail(_emailController.text);
+    if (sanitizedEmail == null) {
+      _showError('Please enter a valid email address');
+      return;
+    }
+
+    final password = _passwordController.text;
+    if (!InputSanitizer.validatePassword(password)) {
+      _showError('Invalid password format');
+      return;
+    }
+
     // Log in with Firebase Auth
     UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: _emailController.text.trim(),
-      password: _passwordController.text.trim(),
+      email: sanitizedEmail,
+      password: password,
     );
+
+    // Validate Firebase UID
+    final uid = userCredential.user!.uid;
+    if (!InputSanitizer.isValidFirebaseUid(uid)) {
+      _showError('Invalid user ID format');
+      return;
+    }
 
     // Navigate to Home
     if (!mounted) return;
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (_) => Footer(uid: userCredential.user!.uid, email: _emailController.text.trim()),
+        builder: (_) => Footer(uid: uid, email: sanitizedEmail),
       ),
     );
   }
 
   Future<void> _register() async {
-    final email = _emailController.text.trim();
-    final password = _passwordController.text.trim();
-    final username = _usernameController.text.trim();
+    // Sanitize and validate inputs
+    final sanitizedEmail = InputSanitizer.sanitizeEmail(_emailController.text);
+    if (sanitizedEmail == null) {
+      _showError('Please enter a valid email address');
+      return;
+    }
+
+    final password = _passwordController.text;
+    if (!InputSanitizer.validatePassword(password)) {
+      _showError('Password must be between 6 and 128 characters');
+      return;
+    }
+
+    final sanitizedUsername = InputSanitizer.sanitizeUsername(_usernameController.text);
+    if (sanitizedUsername == null) {
+      _showError('Username must be 3-30 characters and contain only letters, numbers, spaces, hyphens, or underscores');
+      return;
+    }
 
     // Create User in Firebase Auth
     UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: email,
+      email: sanitizedEmail,
       password: password,
     );
 
+    // Validate Firebase UID
+    final uid = userCredential.user!.uid;
+    if (!InputSanitizer.isValidFirebaseUid(uid)) {
+      _showError('Invalid user ID format');
+      return;
+    }
+
     // Save "Extra" info (Gender, Username) to Firestore Database
-    await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
-      'username': username,
-      'email': email,
+    // Sanitize username before storing
+    await FirebaseFirestore.instance.collection('users').doc(uid).set({
+      'username': InputSanitizer.sanitizeForDisplay(sanitizedUsername),
+      'email': sanitizedEmail,
       'gender': _selectedGender,
       'createdAt': FieldValue.serverTimestamp(),
     });
@@ -90,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (_) => Footer(uid: userCredential.user!.uid, email: email),
+        builder: (_) => Footer(uid: uid, email: sanitizedEmail),
       ),
     );
   }
@@ -118,7 +162,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       TextFormField(
                         controller: _usernameController,
                         decoration: const InputDecoration(labelText: 'Username'),
-                        validator: (v) => v!.isEmpty ? 'Required' : null,
+                        validator: (v) {
+                          if (v == null || v.isEmpty) return 'Required';
+                          final sanitized = InputSanitizer.sanitizeUsername(v);
+                          if (sanitized == null) {
+                            return 'Username must be 3-30 characters and contain only letters, numbers, spaces, hyphens, or underscores';
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<String>(
@@ -133,14 +184,26 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextFormField(
                       controller: _emailController,
                       decoration: const InputDecoration(labelText: 'Email'),
-                      validator: (v) => !v!.contains('@') ? 'Invalid Email' : null,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) return 'Required';
+                        if (!InputSanitizer.validateEmail(v)) {
+                          return 'Please enter a valid email address';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _passwordController,
                       decoration: const InputDecoration(labelText: 'Password'),
                       obscureText: true,
-                      validator: (v) => v!.length < 6 ? 'Min 6 chars' : null,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) return 'Required';
+                        if (!InputSanitizer.validatePassword(v)) {
+                          return 'Password must be between 6 and 128 characters';
+                        }
+                        return null;
+                      },
                     ),
                   ],
                 ),

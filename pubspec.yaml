@@ -72,6 +72,7 @@ flutter:
     - assets/images/logo.png
     - assets/images/graph_placeholder.png
     - assets/images/GlucoGuard_fullcircle.png
+    - assets/config.json
 
 flutter_icons:
   android: true
