@@ -199,15 +199,3 @@ services:
 volumes:
   postgres_data:
 ```
-
-## For Your Professor
-
-This Docker Compose setup demonstrates:
-- ✅ Containerization of the Flask backend
-- ✅ Service definition and configuration
-- ✅ Port mapping and networking
-- ✅ Volume mounting for persistent data
-- ✅ Health checks for service monitoring
-- ✅ Environment variable configuration
-- ✅ Production-ready setup with restart policies
-
