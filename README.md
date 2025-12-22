@@ -359,8 +359,6 @@ Edit `docker-compose.yml` to customize:
 - Volume mounts
 - Health check intervals
 
-For detailed Docker documentation, see [README_DOCKER.md](README_DOCKER.md)
-
 ---
 
 ## API Documentation
@@ -604,5 +602,6 @@ For issues, questions, or contributions, please open an issue on the [GitHub rep
 ---
 
 **Note:** This application is for educational and informational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of qualified health providers with any questions regarding a medical condition.
+
 
 
