@@ -1,7 +1,6 @@
 ﻿# GlucoGuard - AI-Powered Diabetes Risk Prediction System
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Flutter](https://img.shields.io/badge/Flutter-3.9.2-blue.svg)
 ![Python](https://img.shields.io/badge/Python-3.9+-green.svg)
 
@@ -605,4 +604,5 @@ For issues, questions, or contributions, please open an issue on the [GitHub rep
 ---
 
 **Note:** This application is for educational and informational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of qualified health providers with any questions regarding a medical condition.
+
 
